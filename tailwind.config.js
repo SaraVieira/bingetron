@@ -9,7 +9,9 @@ module.exports = {
       colors: {
         blue: "#042B41",
         green: "#79BD9A",
-        darkBlue: "#042B41"
+        darkBlue: "#042B41",
+        card: "#0B486B",
+        yellow: "#CFF09E"
       },
     },
   },

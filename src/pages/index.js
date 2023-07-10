@@ -1,12 +1,15 @@
 import { Combobox } from "@headlessui/react";
 import axios from "axios";
 import { debounce } from "lodash-es";
+import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 
 export default function Home() {
   const [results, setResults] = useState([]);
   const [selectedShow, setSelectedShow] = useState();
   const [value, setValue] = useState("")
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const onChange = async (value) => {
     const data = await axios.get(`/api/search?query=${value}`);
@@ -14,6 +17,13 @@ export default function Home() {
   };
 
   const debouncedChangeHandler = debounce(onChange, 200);
+
+  const selectShow = async (id) => {
+    setLoading(true)
+    const {data} = await axios.get(`/api/random?id=${id}`);
+
+    router.push(`show/${id}/${data.season}/${data.episode}#e-${data.episode}`)
+  }
 
   return (
     <main className={`bg-blue h-screen flex items-center py-5 flex-col ${value ? "justify-start" : "justify-center"}  transition duration-500`}>
@@ -29,7 +39,7 @@ export default function Home() {
         />
         <Combobox.Options className="mt-5  w-[90%] max-w-md">
           {results.map((show) => (
-            <Combobox.Option className="p-5 flex justify-between text-darkBlue m-auto bg-green mb-[1px] rounded-sm" key={show.id} value={show.id}>
+            <Combobox.Option onClick={() => selectShow(show.id)} className="p-5 flex justify-between text-darkBlue m-auto bg-green mb-[1px] rounded-sm" key={show.id} value={show.id}>
               <span className="font-bold">{show.name}</span>
               {show.year}
             </Combobox.Option>
